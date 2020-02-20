@@ -3,6 +3,8 @@ const http = require('http');
 const path = require('path');
 const errorhandler = require('errorhandler');
 
+const config = require('./config/index');
+
 const app = express();
 
 const exception = (err, req, res, next) => {
@@ -17,8 +19,6 @@ const exception = (err, req, res, next) => {
 const pageNotFound = (req, res, next) => {
 	res.status(404).send('Page not found');
 }
-
-app.set('port', process.env.PORT || 3000)
 
 app
 	.use((req, res, next) => {
@@ -35,6 +35,6 @@ app
 	})
 	.use(exception)
 	.use(pageNotFound)
-	.listen(app.get('port'), () => {
-	console.log(`Сервер запущен на порту ${app.get('port')}`);
+	.listen(config.get('port'), () => {
+	console.log(`Сервер запущен на порту ${config.get('port')}`);
 });
