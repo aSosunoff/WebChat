@@ -37,6 +37,11 @@ app
 	.use(exception)
 	.use(pageNotFound)
 	.listen(config.get('port'), () => {
-		console.log(1);
+		// logger.silly(`Сервер запущен на порту ${config.get('port')}`);
+		// logger.debug(`Сервер запущен на порту ${config.get('port')}`);
+		// logger.verbose(`Сервер запущен на порту ${config.get('port')}`);
+		// logger.http(`Сервер запущен на порту ${config.get('port')}`);
 		logger.info(`Сервер запущен на порту ${config.get('port')}`);
+		// logger.warn(`Сервер запущен на порту ${config.get('port')}`);
+		// logger.error(`Сервер запущен на порту ${config.get('port')}`);
 	});
