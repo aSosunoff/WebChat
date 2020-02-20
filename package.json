@@ -4,13 +4,24 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "prod": "SET NODE_ENV=production&& node app.js",
+    "dev": "SET NODE_ENV=development&& node app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.17.1"
+    "body-parser": "^1.19.0",
+    "cookie-parser": "^1.4.4",
+    "errorhandler": "^1.5.1",
+    "express": "^4.17.1",
+    "express-favicon": "^2.0.1",
+    "express-handlebars": "^3.1.0",
+    "hbs": "^4.1.0",
+    "morgan": "^1.9.1",
+    "nconf": "^0.10.0",
+    "winston": "^3.2.1"
   },
   "devDependencies": {}
 }
