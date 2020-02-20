@@ -4,6 +4,7 @@ const path = require('path');
 const errorhandler = require('errorhandler');
 
 const config = require('./config/index');
+const logger = require('./libs/log')(module);
 
 const app = express();
 
@@ -36,5 +37,6 @@ app
 	.use(exception)
 	.use(pageNotFound)
 	.listen(config.get('port'), () => {
-	console.log(`Сервер запущен на порту ${config.get('port')}`);
-});
+		console.log(1);
+		logger.info(`Сервер запущен на порту ${config.get('port')}`);
+	});
