@@ -1,3 +1,12 @@
 {
-	"port": 3000
+	"port": 3000,
+	"mongoose": {
+		"uris": "mongodb://localhost:27017/test",
+		"options": {
+			"useNewUrlParser": true,
+			"useUnifiedTopology": true,
+			"keepAlive": 1,
+			"useCreateIndex": true
+		}
+	}
 }

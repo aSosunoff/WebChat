@@ -10,7 +10,7 @@ const expressHbs = require('express-handlebars');
 const hbs = require('hbs');
 const bodyParser = require ('body-parser');
 
-const config = require('./config/index');
+const config = require('./config');
 const logger = require('./libs/log')(module);
 
 // -----------------------------------------
