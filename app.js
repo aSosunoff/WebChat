@@ -10,7 +10,7 @@ const expressHbs = require('express-handlebars');
 const hbs = require('hbs');
 const bodyParser = require ('body-parser');
 
-const config = require('./config/index');
+const config = require('./config');
 const logger = require('./libs/log')(module);
 
 // -----------------------------------------
@@ -27,6 +27,13 @@ const exphbs = expressHbs.create({
                 this._sections = {};
                 
             this._sections[name] = options.fn(this); 
+            return null;
+		},
+		blocks: function(name, options) { 
+            if (!this._blocks) 
+                this._blocks = {};
+                
+            this._blocks[name] = options.fn(this); 
             return null;
         },
     }
@@ -60,8 +67,8 @@ app
 	.use((req, res, next) => {
 		if(req.url == '/'){
 			res.render('index.hbs', {
-				title: 'Главная страница',
-				isHome: true
+				// title: 'Главная страница',
+				// isHome: true
 			});
 		}
 		else
