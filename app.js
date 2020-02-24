@@ -90,5 +90,6 @@ app
 	})
 	.use(pageNotFound)
 	.listen(config.get('port'), () => {
-		logger.info(`Сервер запущен на порту ${config.get('port')}`);
+		console.log(`Сервер запущен на порту ${config.get('port')}`);
+		/* logger.info(`Сервер запущен на порту ${config.get('port')}`); */
 	});
