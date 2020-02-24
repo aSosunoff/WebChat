@@ -8,5 +8,14 @@
 			"keepAlive": 1,
 			"useCreateIndex": true
 		}
+	},
+	"session": {
+		"secret": "WebChat",
+		"key": "sid",
+		"cookie": {
+			"path": "/",
+			"httpOnly": true,
+			"maxAge": null
+		}
 	}
 }
