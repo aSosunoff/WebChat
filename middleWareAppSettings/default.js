@@ -37,10 +37,10 @@ module.exports = (app, module) => {
             resave: true,
             saveUninitialized: true
         }))
-        .use((req, res, next) => {
+        /* .use((req, res, next) => {
             req.session.numberOfVisits = req.session.numberOfVisits + 1 || 1;
             res.send("Visits:" + req.session.numberOfVisits);
-        })
+        }) */
         .use(express.static(path.join(rootDirName, 'public')))
         .use(require('../middleware/sendHttpError'));
 }

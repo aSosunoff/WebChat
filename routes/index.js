@@ -3,7 +3,11 @@ const User = require('../models/user');
 const { ObjectID } = require('mongodb');
 
 module.exports = (app) => {
-    app.use((req, res, next) => {
+	app.get('/', require('./frontpage').get);
+	app.get('/login', require('./login').get);
+	app.get('/chat', require('./chat').get);
+
+/*     app.use((req, res, next) => {
 		if(req.url == '/'){
 			res.render('index.hbs', {
 				// title: 'Главная страница',
@@ -41,5 +45,5 @@ module.exports = (app) => {
 
 			res.send(user);
 		});
-	});
+	}); */
 }
