@@ -2,10 +2,10 @@ const HttpError = require('../error').HttpError;
 const UserModel = require('../models/user');
 
 module.exports = (req, res, next) => {
-    req.user = null;
+    req.user = res.locals.user = null;
 
     if(!req.session.user) {
-        next();
+        return next();
     }
 
     UserModel.findById(req.session.user, (err, user) => {
