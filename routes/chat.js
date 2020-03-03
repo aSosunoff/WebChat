@@ -1,3 +1,3 @@
-exports.get = (req, res) => {
+exports.get = (req, res, next) => {
     res.render('chat.hbs');
 }

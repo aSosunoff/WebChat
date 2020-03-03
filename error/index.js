@@ -14,4 +14,19 @@ class HttpError extends Error{
     }
 }
 
+class AuthError extends Error{
+    constructor(message){
+        super(message || http.STATUS_CODES[status] || 'Error');
+        Error.captureStackTrace(this, AuthError);
+
+        this.name = 'AuthError';
+    }
+
+    toString(){
+        return this.message;
+    }
+}
+
+module.exports.AuthError = AuthError;
+
 module.exports.HttpError = HttpError;

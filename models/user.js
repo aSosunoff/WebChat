@@ -1,5 +1,7 @@
 const crypto = require('crypto');
+const async = require("async");
 const mongoose = require('../libs/mongoose');
+const AuthError = require('../error').AuthError;
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
@@ -41,6 +43,39 @@ userSchema.virtual('password')
 
 userSchema.methods.checkPassword = function(password){
     return this.encryptPassword(password) === this.hashedPassword;
+}
+
+userSchema.statics.authrize = function(name, password, callback){
+    const UserModel = this;
+
+    async.waterfall(
+        [
+            callback => {
+                UserModel.findOne({name}, callback);
+            },
+            (user, callback) => {
+                if (user) {
+                    if (user.checkPassword(password)) {
+                        callback(null, user);
+                    } else {
+                        callback(new AuthError(403, 'Пароль не верен'));
+                    }
+                } else {
+                    let newUser = new UserModel({
+                        name,
+                        password
+                    });
+    
+                    newUser.save(err => {
+                        if (err) {
+                            return callback(err);
+                        }
+    
+                        callback(null, newUser);
+                    });
+                }
+            }
+        ], callback);
 }
 
 module.exports = mongoose.model('User', userSchema);
