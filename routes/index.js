@@ -10,7 +10,9 @@ module.exports = (app) => {
 
 	app.post('/logout', require('./logout').post);
 
-	app.get('/chat', require('./chat').get);
+	app.get('/chat', 
+		require('../middleware/checkAuth'), 
+		require('./chat').get);
 
 /*     app.use((req, res, next) => {
 		if(req.url == '/'){
