@@ -1,4 +1,3 @@
-
 const { HttpError } = require('../error');
 const errorhandlerMiddleware = require('errorhandler');
 
@@ -23,6 +22,6 @@ module.exports = (app) => {
         })
         .use((req, res, next) => {
             res.status(404);
-            res.render('pageNotFound.hbs', { text: 'Страница не найдена' })
+            res.render('error/pageNotFound.hbs', { text: 'Страница не найдена' })
         });
 }

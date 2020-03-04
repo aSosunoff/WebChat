@@ -7,10 +7,10 @@ const logger = require('./libs/log')(module);
 
 const app = express();
 
-require('./middleWareAppSettings/default')(app, module);
-require('./middleWareAppSettings/template')(app, module);
+require('./middleware/default')(app, module);
+require('./middleware/template')(app, module);
 require('./routes')(app);
-require('./middleWareAppSettings/error')(app);
+require('./middleware/error')(app);
 
 app
 	.listen(config.get('port'), () => {

@@ -7,7 +7,7 @@ module.exports = (req, res, next) => {
             || req.headers.accept.indexOf('json') > -1){
             res.send(error);
         } else {
-            res.render('error.hbs', { error })
+            res.render('error/error.hbs', { error })
         }
     }
 

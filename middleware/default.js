@@ -1,12 +1,12 @@
-const express = require('express');
+const express = require('./node_modules/express');
 const path = require('path');
-const faviconMiddleware = require('express-favicon');
-const bodyParser = require('body-parser');
-const morganMiddleware = require('morgan');
+const faviconMiddleware = require('./node_modules/express-favicon');
+const bodyParser = require('./node_modules/body-parser');
+const morganMiddleware = require('./node_modules/morgan');
 
-const coocieParserMiddleware = require('cookie-parser');
-const expressSession = require('express-session');
-const connectMongo = require('connect-mongo')(expressSession);
+const coocieParserMiddleware = require('./node_modules/cookie-parser');
+const expressSession = require('./node_modules/express-session');
+const connectMongo = require('./node_modules/connect-mongo')(expressSession);
 
 const config = require('../config');
 const mongoose = require('../libs/mongoose');
