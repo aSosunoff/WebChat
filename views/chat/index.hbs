@@ -1,1 +1,93 @@
-<p>{{user.name}}</p>
+<div class="row">
+    <div class="col-lg-12 chat-box">
+
+    </div>
+</div>
+
+
+
+{{#section 'script'}}
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    class ContainerChat {
+        template = `
+        <div class="container-chat">
+            <div class="container-chat__message">
+                <div class="container-chat__message-item">{{user.name}}</div>
+            </div>
+
+            <div class="input-group mb-3 container-chat__sender">
+                <input type="text" class="form-control input-message" placeholder="сообщение..."
+                    aria-label="Recipient's username" aria-describedby="button-addon2">
+                <div class="input-group-append">
+                    <button class="btn btn-outline-primary send-message-btn" type="button" id="button-addon2">отправить</button>
+                </div>
+            </div>
+        </div>
+        `;
+        constructor(el) {
+            el.innerHTML = this.template;
+            el.addEventListener('click', this.onClick.bind(this));
+
+            this.messagePanel = el.querySelector('.container-chat__message');
+            this.inputMessage = el.querySelector('.input-message');
+        }
+
+        publishMessage(message) {
+            this.messagePanel.insertAdjacentHTML('beforeend',`<div class="container-chat__message-item">${message}</div>`);
+        }
+
+        onSendMessageBtn(event, cls) {
+            let elementAction = event.target.closest(cls);
+
+            if (!elementAction) {
+                return;
+            }
+
+            this.onSend(this.inputMessage.value);
+        }
+
+        onClick(event) {
+            [
+                '.send-message-btn',
+            ].forEach(e => {
+                this._strategyOnClick(event, e);
+            });
+        }
+
+        _strategyOnClick(event, cls) {
+            function upperFirstCharacterInWord(word) {
+                return word[0].toUpperCase() + word.slice(1);
+            }
+
+            function camelize(str) {
+                let words = str.split(/-/);
+                return words
+                    .map(upperFirstCharacterInWord)
+                    .join("");
+            }
+
+            let method = 'on' + camelize(cls.replace(".", ""));
+
+            if (this[method]) {
+                this[method](event, cls);
+            }
+
+        }
+    }
+
+    const containerChat = new ContainerChat(document.querySelector('.chat-box'));
+
+    var socket = io();
+
+    containerChat.onSend = (message) => {
+        socket.emit('message', message, (data) => {
+            containerChat.publishMessage(`вы: ${data}`);
+        });
+    }
+    
+    socket.on('message', (data) => {
+        containerChat.publishMessage(data);
+    });
+</script>
+{{/section}}
