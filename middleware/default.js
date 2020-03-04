@@ -1,12 +1,12 @@
-const express = require('./node_modules/express');
+const express = require('express');
 const path = require('path');
-const faviconMiddleware = require('./node_modules/express-favicon');
-const bodyParser = require('./node_modules/body-parser');
-const morganMiddleware = require('./node_modules/morgan');
+const faviconMiddleware = require('express-favicon');
+const bodyParser = require('body-parser');
+const morganMiddleware = require('morgan');
 
-const coocieParserMiddleware = require('./node_modules/cookie-parser');
-const expressSession = require('./node_modules/express-session');
-const connectMongo = require('./node_modules/connect-mongo')(expressSession);
+const coocieParserMiddleware = require('cookie-parser');
+const expressSession = require('express-session');
+const connectMongo = require('connect-mongo')(expressSession);
 
 const config = require('../config');
 const mongoose = require('../libs/mongoose');
@@ -37,10 +37,6 @@ module.exports = (app, module) => {
             resave: true,
             saveUninitialized: true
         }))
-        /* .use((req, res, next) => {
-            req.session.numberOfVisits = req.session.numberOfVisits + 1 || 1;
-            res.send("Visits:" + req.session.numberOfVisits);
-        }) */
         .use(express.static(path.join(rootDirName, 'public')))
         .use(require('./middlewareHelper/sendHttpError'))
         .use(require('./middlewareHelper/loadUserFromSession'));
