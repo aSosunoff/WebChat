@@ -42,6 +42,6 @@ module.exports = (app, module) => {
             res.send("Visits:" + req.session.numberOfVisits);
         }) */
         .use(express.static(path.join(rootDirName, 'public')))
-        .use(require('../middleware/sendHttpError'))
-        .use(require('../middleware/loadUserFromSession'));
+        .use(require('./middlewareHelper/sendHttpError'))
+        .use(require('./middlewareHelper/loadUserFromSession'));
 }

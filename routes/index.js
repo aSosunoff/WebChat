@@ -2,55 +2,12 @@ const { HttpError } = require('../error');
 const User = require('../models/user');
 const { ObjectID } = require('mongodb');
 
+const homeRouter = require('./homeRouter');
+const authRouter = require('./authRouter');
+const chatRouter = require('./chatRouter');
+
 module.exports = (app) => {
-	app.get('/', require('./frontpage').get);
-	
-	app.get('/login', require('./login').get);
-	app.post('/login', require('./login').post);
-
-	app.post('/logout', require('./logout').post);
-
-	app.get('/chat', 
-		require('../middleware/checkAuth'), 
-		require('./chat').get);
-
-/*     app.use((req, res, next) => {
-		if(req.url == '/'){
-			res.render('index.hbs', {
-				// title: 'Главная страница',
-				// isHome: true
-			});
-		}
-		else
-			next();
-	})
-	.get('/users', (req, res, next) => {
-		User.find({}, (err, users) => {
-			if(err) 
-				return next(err);
-			
-			if(!users.length)
-				return next(new HttpError(404, 'User not found'));
-				
-			res.send(users);
-		});
-	})
-	.get('/user/:id', (req, res, next) => {
-		let id;
-		try {
-			id = new ObjectID(req.params['id']);	
-		} catch (error) {
-			return next(404);
-		}
-
-		User.findById(id, (err, user) => {
-			if(err) 
-				return next(err);
-			
-			if(!user) 
-				return next(new HttpError(404, 'User not found'));
-
-			res.send(user);
-		});
-	}); */
+	app.use('/', homeRouter);
+	app.use('/auth', authRouter);
+	app.use('/chat', chatRouter);
 }

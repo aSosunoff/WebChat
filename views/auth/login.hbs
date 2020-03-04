@@ -32,7 +32,7 @@
                 body[name] = value;
             }
 
-            axios.post('/login', body)
+            axios.post('/auth', body)
                 .then(res => {
                     Message.success('Успех');
                     setTimeout(() => {

@@ -2,11 +2,11 @@ const AuthError = require('../error').AuthError;
 const HttpError = require('../error').HttpError;
 const UserModel = require("../models/user");
 
-exports.get = (req, res) => {
-	res.render("login.hbs");
+exports.getLogin = (req, res) => {
+	res.render("auth/login.hbs");
 };
 
-exports.post = (req, res, next) => {
+exports.postLogin = (req, res, next) => {
 	let name = req.body.name;
 	let password = req.body.password;
 
@@ -23,4 +23,9 @@ exports.post = (req, res, next) => {
             
 		res.send({});
 	});
+};
+
+exports.postLogout = (req, res, next) => {
+	req.session.destroy();
+	res.redirect('/');
 };

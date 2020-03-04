@@ -1,5 +1,5 @@
-const HttpError = require('../error').HttpError;
-const UserModel = require('../models/user');
+const HttpError = require('../../error').HttpError;
+const UserModel = require('../../models/user');
 
 module.exports = (req, res, next) => {
     req.user = res.locals.user = null;
