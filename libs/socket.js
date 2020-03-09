@@ -59,51 +59,7 @@ module.exports = (server) => {
         origins: `localhost:${config.get("port")}`,
     });
 
-    io.use((socket, next) => {
-        authSocket(socket, next);
-        /* new Promise((resolve, reject) => {
-            socket.handshake.cookie = cookie.parse(socket.handshake.headers.cookie);
-            let sidCookie = socket.handshake.cookie[config.get('session:key')];
-            let sid = coocieParserMiddleware.signedCookie(sidCookie, config.get('session:secret'));
-
-            sessionStore.load(sid, (err, session) => {
-                if(err){
-                    reject(new HttpError(401, 'Сессий нет'));
-                } else {
-                    socket.handshake.session = session;
-                    resolve(session);
-                }                    
-            });
-        })
-        .then(session => {
-            return new Promise((resolve, reject) => {
-                if(!session.user){
-                    logger.debug(`Анонимная сессия ${session.id}`);
-                    reject(new HttpError(403, 'Анонимная сессия'));
-                }
-    
-                logger.debug(`Подключен пользователь ${session.user}`);
-    
-                User.findById(session.user, (err, user) => {
-                    if(err) {
-                        return callback(err);
-                    }
-    
-                    if(!user) {
-                        reject(new HttpError(403, 'Анонимная сессия'));
-                    }
-    
-                    logger.debug(`Пользователь найден ${user}`);
-    
-                    socket.handshake.user = user;
-    
-                    resolve();
-                })
-            });
-        })
-        .then(next)
-        .catch(next); */
-    });
+    io.use(authSocket);
     
     io.on("connection", function(socket) {
         let userName = socket.handshake.user.get('name');
