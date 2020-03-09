@@ -4,6 +4,8 @@
     </div>
 </div>
 
+{{!-- <div class="container-chat__message-item">{{user.name}}</div> --}}
+
 {{#section 'script'}}
 <script src="/vendor/socket/socket.io.js"></script>
 <script>
@@ -11,9 +13,9 @@
         constructor(el) {
             el.innerHTML = `
             <div class="container-chat">
-                <div class="container-chat__message">
-                    <div class="container-chat__message-item">{{user.name}}</div>
-                </div>
+                <div class="container-chat__message"></div>
+
+                <div class="container-chat__status"></div>
 
                 <div class="input-group mb-3 container-chat__sender">
                     <input type="text" class="form-control input-message" placeholder="сообщение..."
@@ -28,6 +30,9 @@
 
             this.messagePanel = el.querySelector('.container-chat__message');
             this.inputMessage = el.querySelector('.input-message');
+            this.status = el.querySelector('.container-chat__status');
+
+            this.isConnectToServer = false;
         }
 
         publishMessage(message) {
@@ -41,8 +46,13 @@
                 return;
             }
 
+            if(!this.isConnectToServer) return this.onDisconnect('Потеряно соединение');
+
             this.onSend(this.inputMessage.value);
         }
+
+        onSend(message) {}
+        onDisconnect(message) {}
 
         onClick(event) {
             [
@@ -50,6 +60,23 @@
             ].forEach(e => {
                 this._strategyOnClick(event, e);
             });
+        }
+
+        start(){
+            this.isConnectToServer = true;
+        }
+
+        stop(){
+            this.isConnectToServer = false;
+        }
+
+        setStatus(text) {
+            this.status.textContent = text;
+            this.status.style.opacity = 1;
+
+            setTimeout(() => {
+                this.status.style.opacity = 0;
+            }, 2000);
         }
 
         _strategyOnClick(event, cls) {
@@ -75,7 +102,9 @@
 
     const containerChat = new ContainerChat(document.querySelector('.chat-box'));
 
-    var socket = io();
+    var socket = io({
+        reconnectionDelay: 0.5
+    });
 
     containerChat.onSend = (message) => {
         socket.emit('message', message, (data) => {
@@ -83,6 +112,20 @@
         });
     }
 
+    containerChat.onDisconnect = message => {
+        Message.info(message);
+    };
+
     socket.on('message', data => containerChat.publishMessage);
+
+    socket.on('connect', () => {
+        containerChat.setStatus('подключено...');
+        containerChat.start();
+    });
+
+    socket.on('disconnect', () => {
+        containerChat.setStatus('переподключение...');
+        containerChat.stop();
+    });
 </script>
 {{/section}}
