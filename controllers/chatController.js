@@ -1,3 +1,5 @@
 exports.index = (req, res, next) => {
-    res.render('chat/index.hbs');
+    res.render('chat/index.hbs', {
+        isChat: true
+    });
 }
