@@ -8,7 +8,7 @@ const logger = require("./log")(module);
 const User = require('../models/user');
 
 module.exports = (server) => {
-    var io = require("socket.io")(server, {
+    const io = require("socket.io")(server, {
         origins: `localhost:${config.get("port")}`,
     });
 
@@ -65,22 +65,18 @@ module.exports = (server) => {
                 callback(null);
             }
         ], err => {
-            if(!err) {
-                return next(null, true);
+            if(err) {
+                return next(err);
             }
         
-            if(err instanceof HttpError){
-                return next(null, false);
-            }
-
-            next(err);
+            next();
         });
     });
     
     io.on("connection", function(socket) {
         let userName = socket.handshake.user.get('name');
-
-        console.log(`${userName} connected`);
+        
+        logger.info(`${userName} connected`);
     
         socket.broadcast.emit('join', userName);
 
@@ -90,8 +86,31 @@ module.exports = (server) => {
         });
     
         socket.on("disconnect", function() {
-            console.log(`user ${userName} disconnected`);
+            logger.info(`user ${userName} disconnected`);
+
             socket.broadcast.emit("leave", userName);
         });
     });
+
+    io.on('session:reload', sid => {
+        let client = Object.values(io.sockets.sockets).find(socket => socket.handshake.session.id == sid);
+
+        sessionStore.load(sid, (err, session) => {
+            if(err){
+                client.emit('error', 'Ошибка сервера');
+                client.disconnect();
+                return;
+            } 
+            
+            if(!session){
+                client.emit('logout', 'Вы не авторизованы');
+                client.disconnect();
+                return;
+            }
+
+            client.handshake.session = session;
+        });
+    });
+
+    return io;
 }

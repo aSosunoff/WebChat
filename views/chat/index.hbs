@@ -4,10 +4,9 @@
     </div>
 </div>
 
-{{!-- <div class="container-chat__message-item">{{user.name}}</div> --}}
-
 {{#section 'script'}}
 <script src="/vendor/socket/socket.io.js"></script>
+
 <script>
     class ContainerChat {
         constructor(el) {
@@ -108,7 +107,7 @@
 
     containerChat.onSend = (message) => {
         socket.emit('message', message, (data) => {
-            containerChat.publishMessage(`вы: ${data}`);
+            containerChat.publishMessage(`я: ${data}`);
         });
     }
 
@@ -130,6 +129,9 @@
         })
         .on('leave', user => {
             containerChat.setStatus(`Пользователь <strong>${user}</strong> отключился`)
+        })
+        .on('logout', () => {
+            location.href = '/';
         })
         .on('message', (user, data) => {
             containerChat.publishMessage(`${user}: ${data}`);

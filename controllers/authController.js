@@ -26,6 +26,17 @@ exports.postLogin = (req, res, next) => {
 };
 
 exports.postLogout = (req, res, next) => {
-	req.session.destroy();
-	res.redirect('/');
+	const sid = req.session.id;
+
+	const io = req.app.get('io');
+
+	req.session.destroy(err => {
+		io.sockets._events['session:reload'](sid);
+
+		if(err){
+			return next(err);
+		}
+		
+		res.redirect('/');
+	});
 };
