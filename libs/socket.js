@@ -10,7 +10,7 @@ module.exports = (server) => {
     
         socket.on("message", function(msg, cb) {
             socket.broadcast.emit("message", msg);
-            cb(msg);
+            cb && cb(msg);
         });
     
         socket.on("disconnect", function() {
