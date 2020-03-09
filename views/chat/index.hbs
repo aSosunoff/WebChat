@@ -71,12 +71,12 @@
         }
 
         setStatus(text) {
-            this.status.textContent = text;
+            this.status.innerHTML = text;
             this.status.style.opacity = 1;
 
             setTimeout(() => {
                 this.status.style.opacity = 0;
-            }, 2000);
+            }, 3000);
         }
 
         _strategyOnClick(event, cls) {
@@ -116,16 +116,24 @@
         Message.info(message);
     };
 
-    socket.on('message', data => containerChat.publishMessage);
+    socket
+        .on('connect', () => {
+            containerChat.setStatus('подключено...');
+            containerChat.start();
+        })
+        .on('disconnect', () => {
+            containerChat.setStatus('переподключение...');
+            containerChat.stop();
+        })
+        .on('join', user => {
+            containerChat.setStatus(`К чату подключился <strong>${user}</strong>`)
+        })
+        .on('leave', user => {
+            containerChat.setStatus(`Пользователь <strong>${user}</strong> отключился`)
+        })
+        .on('message', (user, data) => {
+            containerChat.publishMessage(`${user}: ${data}`);
+        });
 
-    socket.on('connect', () => {
-        containerChat.setStatus('подключено...');
-        containerChat.start();
-    });
-
-    socket.on('disconnect', () => {
-        containerChat.setStatus('переподключение...');
-        containerChat.stop();
-    });
 </script>
 {{/section}}
