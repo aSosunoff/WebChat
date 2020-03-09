@@ -45,37 +45,47 @@ userSchema.methods.checkPassword = function(password){
     return this.encryptPassword(password) === this.hashedPassword;
 }
 
-userSchema.statics.authrize = function(name, password, callback){
-    const UserModel = this;
-
-    async.waterfall(
-        [
-            callback => {
-                UserModel.findOne({name}, callback);
-            },
-            (user, callback) => {
-                if (user) {
-                    if (user.checkPassword(password)) {
-                        callback(null, user);
-                    } else {
-                        callback(new AuthError(403, 'Пароль не верен'));
-                    }
-                } else {
-                    let newUser = new UserModel({
-                        name,
-                        password
-                    });
-    
-                    newUser.save(err => {
-                        if (err) {
-                            return callback(err);
-                        }
-    
-                        callback(null, newUser);
-                    });
-                }
+async function auth(UserModel, name, password){
+    let user = await new Promise((resolve, reject) => {
+        UserModel.findOne({name}, (err, user) => {
+            if(err) {
+                reject(err);
             }
-        ], callback);
+
+            resolve(user);
+        });
+    });
+
+    return await new Promise((resolve, reject) => {
+        if (user) {
+            if (!user.checkPassword(password)) {
+                reject(new AuthError(403, 'Пароль не верен'))
+            }
+
+            resolve(user);
+        }
+
+        user = new UserModel({
+            name,
+            password
+        });
+
+        user.save(err => {
+            if (err) {
+                reject(err);
+            }
+
+            resolve(user);
+        });
+    });
+}
+
+userSchema.statics.authrize = function(name, password, callback){
+    auth(this, name, password)
+        .then(user => {
+            callback(null, user);
+        })
+        .catch(callback);
 }
 
 module.exports = mongoose.model('User', userSchema);
