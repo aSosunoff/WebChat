@@ -6,10 +6,10 @@ const morganMiddleware = require('morgan');
 
 const coocieParserMiddleware = require('cookie-parser');
 const expressSession = require('express-session');
-const connectMongo = require('connect-mongo')(expressSession);
 
 const config = require('../config');
-const mongoose = require('../libs/mongoose');
+
+const sessionStore = require('../libs/sessionStore');
 
 const skip = (req, res)  => res.statusCode < 400;
 
@@ -31,9 +31,7 @@ module.exports = (app, module) => {
             secret: config.get('session:secret'),
             key: config.get('session:key'),
             cookie: config.get('session:cookie'),
-            store: new connectMongo({
-                mongooseConnection: mongoose.connection
-            }),
+            store: sessionStore,
             resave: true,
             saveUninitialized: true
         }))
