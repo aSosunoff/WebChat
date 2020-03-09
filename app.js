@@ -4,9 +4,7 @@ var server = require("http").createServer(app);
 const config = require("./config");
 const logger = require("./libs/log")(module);
 
-const io = require('./libs/socket')(server);
-
-app.set('io', io);
+app.set('io', require('./libs/socket')(server));
 // -----------------------------------------
 
 require("./middleware/default")(app, module);

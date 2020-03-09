@@ -1,5 +1,4 @@
 const config = require("../config");
-const async = require('async');
 const cookie = require('cookie');
 const coocieParserMiddleware = require('cookie-parser');
 const sessionStore = require('../libs/sessionStore');
@@ -12,65 +11,49 @@ module.exports = (server) => {
         origins: `localhost:${config.get("port")}`,
     });
 
-    io.use((socket, next) =>{
-        async.waterfall([
-            callback => {
-                socket.handshake.cookie = cookie.parse(socket.handshake.headers.cookie);
-                let sidCookie = socket.handshake.cookie[config.get('session:key')];
-                let sid = coocieParserMiddleware.signedCookie(sidCookie, config.get('session:secret'));
+    io.use((socket, next) => {
+        new Promise((resolve, reject) => {
+            socket.handshake.cookie = cookie.parse(socket.handshake.headers.cookie);
+            let sidCookie = socket.handshake.cookie[config.get('session:key')];
+            let sid = coocieParserMiddleware.signedCookie(sidCookie, config.get('session:secret'));
 
-                sessionStore.load(sid, (err, session) => {
-                    if(err){
-                        callback(null, null);
-                    } else {
-                        callback(null, session);
-                    }                    
-                });
-            },
-            (session, callback) => {
-                if(!session){
-                    callback(new HttpError(401, 'Сессий нет'))
-                }
-
-                socket.handshake.session = session;
-
+            sessionStore.load(sid, (err, session) => {
+                if(err){
+                    reject(new HttpError(401, 'Сессий нет'));
+                } else {
+                    socket.handshake.session = session;
+                    resolve(session);
+                }                    
+            });
+        })
+        .then(session => {
+            return new Promise((resolve, reject) => {
                 if(!session.user){
                     logger.debug(`Анонимная сессия ${session.id}`);
-                    return callback(null, null);
+                    reject(new HttpError(403, 'Анонимная сессия'));
                 }
-
+    
                 logger.debug(`Подключен пользователь ${session.user}`);
-
+    
                 User.findById(session.user, (err, user) => {
                     if(err) {
                         return callback(err);
                     }
-
+    
                     if(!user) {
-                        return callback(null, null);
+                        reject(new HttpError(403, 'Анонимная сессия'));
                     }
-
+    
                     logger.debug(`Пользователь найден ${user}`);
-
-                    callback(null, user);
+    
+                    socket.handshake.user = user;
+    
+                    resolve();
                 })
-            },
-            (user, callback) => {
-                if(!user) {
-                    return callback(new HttpError(403, 'Анонимная сессия'));
-                }
-
-                socket.handshake.user = user;
-
-                callback(null);
-            }
-        ], err => {
-            if(err) {
-                return next(err);
-            }
-        
-            next();
-        });
+            });
+        })
+        .then(next)
+        .catch(next);
     });
     
     io.on("connection", function(socket) {

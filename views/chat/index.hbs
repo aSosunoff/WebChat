@@ -130,6 +130,9 @@
         .on('leave', user => {
             containerChat.setStatus(`Пользователь <strong>${user}</strong> отключился`)
         })
+        .on('error', (message) => {
+            containerChat.setStatus(`Возникла ошибка: ${message}`)
+        })
         .on('logout', () => {
             location.href = '/';
         })
