@@ -1,31 +1,31 @@
-const async = require('async');
 const mongoose = require("./libs/mongoose");
 const UserModel = require("./models/user.js");
 
-async.series([
-    open,
-    dropDatabase,
-    createUsers
-], (err) => {
-    if(err)
-        console.log('Error', err);
+async function createDb(){
+    await new Promise((resolve, reject) => {
+        mongoose.connection.on("open", resolve);
+    });
 
-    mongoose.disconnect();
-});
+    await mongoose.connection.db.dropDatabase();
 
-function open(callback) {
-	mongoose.connection.on("open", callback);
-}
-
-function dropDatabase(callback) {
-    mongoose.connection.db
-        .dropDatabase(callback);
-}
-
-function createUsers(callback) {
-	let user1 = new UserModel({ name: "Alex", password: "qwerty" });
+    let user1 = new UserModel({ name: "Alex", password: "qwerty" });
 	let user2 = new UserModel({ name: "Bill", password: "123456" });
-	let user3 = new UserModel({ name: "Shon", password: "654321" });
-
-	UserModel.insertMany([user1, user2, user3], callback);
+    let user3 = new UserModel({ name: "Shon", password: "654321" });
+    
+    return await new Promise((resolve, reject) => {
+        UserModel.insertMany([user1, user2, user3], (err, users) => {
+            if(err) {
+                reject(err);
+            }
+            
+            resolve(users);
+        });
+    })
 }
+
+createDb()
+    .then(console.log)
+    .catch(console.log)
+    .finally(() => {
+        process.exit(1);
+    });
