@@ -1,5 +1,4 @@
 const crypto = require('crypto');
-const async = require("async");
 const mongoose = require('../libs/mongoose');
 const AuthError = require('../error').AuthError;
 const Schema = mongoose.Schema;
