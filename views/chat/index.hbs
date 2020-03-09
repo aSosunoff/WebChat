@@ -4,29 +4,26 @@
     </div>
 </div>
 
-
-
 {{#section 'script'}}
-<script src="/socket.io/socket.io.js"></script>
+<script src="/vendor/socket/socket.io.js"></script>
 <script>
     class ContainerChat {
-        template = `
-        <div class="container-chat">
-            <div class="container-chat__message">
-                <div class="container-chat__message-item">{{user.name}}</div>
-            </div>
+        constructor(el) {
+            el.innerHTML = `
+            <div class="container-chat">
+                <div class="container-chat__message">
+                    <div class="container-chat__message-item">{{user.name}}</div>
+                </div>
 
-            <div class="input-group mb-3 container-chat__sender">
-                <input type="text" class="form-control input-message" placeholder="сообщение..."
-                    aria-label="Recipient's username" aria-describedby="button-addon2">
-                <div class="input-group-append">
-                    <button class="btn btn-outline-primary send-message-btn" type="button" id="button-addon2">отправить</button>
+                <div class="input-group mb-3 container-chat__sender">
+                    <input type="text" class="form-control input-message" placeholder="сообщение..."
+                        aria-label="Recipient's username" aria-describedby="button-addon2">
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-primary send-message-btn" type="button" id="button-addon2">отправить</button>
+                    </div>
                 </div>
             </div>
-        </div>
-        `;
-        constructor(el) {
-            el.innerHTML = this.template;
+            `;
             el.addEventListener('click', this.onClick.bind(this));
 
             this.messagePanel = el.querySelector('.container-chat__message');
@@ -34,7 +31,7 @@
         }
 
         publishMessage(message) {
-            this.messagePanel.insertAdjacentHTML('beforeend',`<div class="container-chat__message-item">${message}</div>`);
+            this.messagePanel.insertAdjacentHTML('beforeend', `<div class="container-chat__message-item">${message}</div>`);
         }
 
         onSendMessageBtn(event, cls) {
@@ -85,9 +82,7 @@
             containerChat.publishMessage(`вы: ${data}`);
         });
     }
-    
-    socket.on('message', (data) => {
-        containerChat.publishMessage(data);
-    });
+
+    socket.on('message', data => containerChat.publishMessage);
 </script>
 {{/section}}

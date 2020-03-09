@@ -6,27 +6,34 @@ function clean(cb) {
     return del([ 'public/vendor/**/*.*' ], cb);
 }
 
-function scripts(){
-    return gulp.src([
-        'node_modules/jquery/dist/jquery.js',
-    ])
+function scripts(cb){
+    gulp.src(['node_modules/jquery/dist/jquery.js'])
     .pipe(gulp.dest('public/vendor/jquery'));
+
+    gulp.src(['node_modules/socket.io-client/dist/socket.io.js'])
+    .pipe(gulp.dest('public/vendor/socket'));
+
+    cb();
 }
 
-function bootstrap(){
-    return gulp.src([
+function bootstrap(cb){
+    gulp.src([
         'node_modules/bootstrap/dist/**/*.*',
         '!node_modules/bootstrap/dist/**/*.min.*'
     ])
     .pipe(gulp.dest('public/vendor/bootstrap'));
+
+    cb();
 }
 
-function axios(){
-    return gulp.src([
+function axios(cb){
+    gulp.src([
         'node_modules/axios/dist/**/*.*',
         '!node_modules/axios/dist/**/*.min.*'
     ])
     .pipe(gulp.dest('public/vendor/axios'));
+
+    cb();
 }
 
 const build = gulp.series(clean, scripts, bootstrap, axios);
