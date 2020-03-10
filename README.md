@@ -6,6 +6,8 @@
 
 > npm run gulp
 
+> node app.js
+
 ### Check cookie
 
 > curl http://localhost:3000 --cookie "Cho=Kim;Greet=Hello"
